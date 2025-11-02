@@ -71,6 +71,13 @@ using ProxyData = MTP::ProxyData;
 	return urls;
 }
 
+[[nodiscard]] QString NormalizeMtprotoSecret(const QString &secret) {
+	if (secret.toLower().startsWith(u"ee"_q)) {
+		return secret.mid(0, 22);
+	}
+	return secret;
+}
+
 [[nodiscard]] QString ProxyDataToString(const ProxyData &proxy) {
 	using Type = ProxyData::Type;
 	return u"https://t.me/"_q
@@ -95,7 +102,7 @@ using ProxyData = MTP::ProxyData;
 		proxy.user = fields.value(u"user"_q);
 		proxy.password = fields.value(u"pass"_q);
 	} else if (type == ProxyData::Type::Mtproto) {
-		proxy.password = fields.value(u"secret"_q);
+		proxy.password = NormalizeMtprotoSecret(fields.value(u"secret"_q));
 	}
 	return proxy;
 };
